@@ -101,7 +101,7 @@ public class StockMovementService {
         movement.setBatch(batch);
         movement.setType(type);
         movement.setQuantity(quantity);
-        movement.setNote(note);
+        movement.setNote(note == null ? null : note.trim());
 
         batches.save(batch);
 
