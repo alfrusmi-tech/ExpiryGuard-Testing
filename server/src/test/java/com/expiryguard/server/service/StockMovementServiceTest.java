@@ -1,10 +1,10 @@
-
 package com.expiryguard.server.service;
 
 import com.expiryguard.server.entity.Batch;
 import com.expiryguard.server.entity.MovementType;
 import com.expiryguard.server.repository.BatchRepository;
 import com.expiryguard.server.repository.StockMovementRepository;
+import com.expiryguard.server.entity.StockMovement;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -61,4 +61,32 @@ class StockMovementServiceTest {
 
         verifyNoInteractions(movements);
     }
+
+
+    @Test
+    void stockMovementNoteShouldBeTrimmed() {
+        // Arrange
+        Batch batch = new Batch();
+        batch.setQuantity(10);
+        batch.setExpiryDate(LocalDate.now().plusDays(30));
+
+        when(batches.findByIdForUpdate(1L))
+                .thenReturn(Optional.of(batch));
+
+        when(movements.save(any(StockMovement.class)))
+                .thenAnswer(invocation ->
+                        invocation.getArgument(0));
+
+        // Act
+        StockMovement result = service.record(
+                1L,
+                MovementType.RECEIVED,
+                5,
+                "  New stock  "
+        );
+
+        // Assert
+        assertEquals("New stock", result.getNote());
+    }
+
 }

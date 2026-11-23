@@ -101,10 +101,13 @@ public class StockMovementService {
         movement.setBatch(batch);
         movement.setType(type);
         movement.setQuantity(quantity);
-        movement.setNote(note);
+        movement.setNote(normalizeNote(note));
 
         batches.save(batch);
 
         return movements.save(movement);
+    }
+    private String normalizeNote(String note) {
+    return note == null ? null: note.trim();
     }
 }
